@@ -65,3 +65,4 @@ Controller -> Service -> Repository -> Entity Framework Core -> SQL Server
 ```
 
 Controllers will handle HTTP concerns, services will hold business rules, repositories will isolate persistence, and Entity Framework Core will manage database access and migrations.
+
