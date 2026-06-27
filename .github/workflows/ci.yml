@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Build, lint, and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
+        with:
+          global-json-file: global.json
+
+      - name: Restore and audit dependencies
+        run: dotnet restore AuthenticationService.sln -p:NuGetAudit=true -p:NuGetAuditMode=all -warnaserror
+
+      - name: Verify formatting
+        run: dotnet format AuthenticationService.sln --verify-no-changes --no-restore
+
+      - name: Build
+        run: dotnet build AuthenticationService.sln --configuration Release --no-restore --warnaserror
+
+      - name: Test
+        run: dotnet test AuthenticationService.sln --configuration Release --no-build --no-restore
