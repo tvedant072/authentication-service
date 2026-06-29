@@ -1,4 +1,7 @@
 using AuthenticationService.Api.Data;
+using AuthenticationService.Api.Configuration;
+using AuthenticationService.Api.Repositories;
+using AuthenticationService.Api.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -20,6 +23,17 @@ builder.Services.AddDbContext<AuthDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+builder.Services.AddOptions<PasswordHashingOptions>()
+    .Bind(builder.Configuration.GetSection(PasswordHashingOptions.SectionName))
+    .Validate(
+        options => options.WorkFactor is >= 10 and <= 16,
+        "PasswordHashing:WorkFactor must be between 10 and 16.")
+    .ValidateOnStart();
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 
 builder.Services.AddHealthChecks();
 
