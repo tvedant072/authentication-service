@@ -2,6 +2,54 @@
 
 Authentication microservice built with ASP.NET Core Web API, SQL Server, Entity Framework Core, and Swagger.
 
+## Docker Quick-Start
+
+```powershell
+docker-compose up --build
+```
+
+This builds the API image and starts two containers — the API and a SQL Server 2022 instance. The API waits for SQL Server to pass its health check before starting.
+
+| Endpoint | URL |
+| API | http://localhost:8080 |
+| Swagger UI | http://localhost:8080/swagger |
+| Health check | http://localhost:8080/health |
+| SQL Server | localhost,1433 |
+
+> Update `SA_PASSWORD` and `ConnectionStrings__DefaultConnection` in
+> [`docker-compose.yml`](docker-compose.yml) to match.
+
+To stop and remove containers (keeps the database volume):
+
+```powershell
+docker-compose down
+```
+
+To also delete the SQL Server data volume:
+
+```powershell
+docker-compose down -v
+```
+
+### Running EF Core Migrations in Docker
+
+Once you have defined entities and created a migration, apply it against the
+running SQL Server container:
+
+```powershell
+dotnet ef database update `
+  --project src\AuthenticationService.Api\AuthenticationService.Api.csproj `
+  --connection "Server=localhost,1433;Database=AuthDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;"
+```
+
+### Environment Variables
+
+| Variable | Description |
+| `ConnectionStrings__DefaultConnection` | Full SQL Server connection string |
+| `ASPNETCORE_ENVIRONMENT` | `Development` |
+
+---
+
 ## Local Development
 
 ```powershell
