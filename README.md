@@ -10,11 +10,10 @@ docker-compose up --build
 
 This builds the API image and starts two containers — the API and a SQL Server 2022 instance. The API waits for SQL Server to pass its health check before starting.
 
-| Endpoint | URL |
-| API | http://localhost:8080 |
-| Swagger UI | http://localhost:8080/swagger |
-| Health check | http://localhost:8080/health |
-| SQL Server | localhost,1433 |
+API --> http://localhost:8080
+Swagger UI --> http://localhost:8080/swagger
+Health check --> http://localhost:8080/health
+SQL Server --> localhost,1433
 
 > Update `SA_PASSWORD` and `ConnectionStrings__DefaultConnection` in
 > [`docker-compose.yml`](docker-compose.yml) to match.
@@ -44,9 +43,8 @@ dotnet ef database update `
 
 ### Environment Variables
 
-| Variable | Description |
-| `ConnectionStrings__DefaultConnection` | Full SQL Server connection string |
-| `ASPNETCORE_ENVIRONMENT` | `Development` |
+`ConnectionStrings__DefaultConnection` --> Full SQL Server connection string
+`ASPNETCORE_ENVIRONMENT` --> Development
 
 ---
 
